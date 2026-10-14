@@ -71,42 +71,6 @@
       border-bottom: 3px solid #fee500; /* 카카오 노란색 하단 포인트 */
     }
 
-    /* 검색 입력창 영역 */
-    .search-box {
-      padding: 14px 16px;
-      background-color: #ffffff;
-      border-bottom: 1px solid #e9ecef;
-      display: flex;
-      gap: 8px;
-    }
-
-    .search-box input {
-      flex: 1;
-      padding: 10px 12px;
-      border: 1px solid #ced4da;
-      border-radius: 6px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .search-box input:focus {
-      border-color: #fcc419;
-    }
-
-    .search-box button {
-      padding: 10px 16px;
-      background-color: #fee500;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      color: #191919;
-    }
-
-    .search-box button:hover {
-      background-color: #fada00;
-    }
-
     /* 검색 결과 리스트 목록 */
     .result-list {
       flex: 1;
@@ -201,19 +165,13 @@
 <body>
 
   <div class="app-container">
-    <!-- 왼쪽 사이드바: 탭, 검색창, 결과 리스트 -->
+    <!-- 왼쪽 사이드바: 탭, 결과 리스트 (검색창 제거됨) -->
     <aside class="sidebar">
       <!-- 카테고리 탭 버튼 -->
       <div class="tab-container">
         <button type="button" class="tab-button active" id="tabBookstore" onclick="switchCategory('bookstore')">📚 서점</button>
         <button type="button" class="tab-button" id="tabLibrary" onclick="switchCategory('library')">🏛️ 도서관</button>
       </div>
-
-      <!-- 검색창 -->
-      <form class="search-box" id="searchForm">
-        <input type="text" id="keywordInput" placeholder="직접 장소를 검색하세요" required>
-        <button type="submit">검색</button>
-      </form>
 
       <!-- 결과 목록 -->
       <ul class="result-list" id="resultList">
@@ -236,10 +194,10 @@
     let currentCenter = null; // 사용자 현재 위치 좌표
     let currentCategory = 'bookstore'; // 현재 선택된 카테고리 기본값 ('bookstore' 또는 'library')
 
-    // 마커 아이콘 색상 이미지 URL (카카오 기본 마커 색상 차용)
+    // 마커 아이콘 색상 이미지 URL
     const markerImageUrls = {
-      bookstore: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', // 파란/노란 별표 아이콘
-      library: 'https://t1.daumcdn.net/mapjsapi/images/2x/marker_red.png' // 빨간색 마커 아이콘
+      bookstore: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+      library: 'https://t1.daumcdn.net/mapjsapi/images/2x/marker_red.png'
     };
 
     // 카카오 지도 SDK 로드 완료 후 실행
@@ -267,16 +225,9 @@
 
       // 사용자 현재 위치 가져오기
       getCurrentLocation();
-
-      // 직접 검색 폼 이벤트 리스너
-      const searchForm = document.getElementById('searchForm');
-      searchForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        searchCustomKeyword();
-      });
     }
 
-    // 현재 위치를 수신하고 초기 카테고리 검색 수행
+    // 현재 위치를 수신하고 초기 카테고리(서점) 검색 수행
     function getCurrentLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -312,7 +263,7 @@
       document.getElementById('tabBookstore').classList.toggle('active', category === 'bookstore');
       document.getElementById('tabLibrary').classList.toggle('active', category === 'library');
 
-      // 기존 결과 및 마커 삭제 후 재검색
+      // 기존 결과 및 마커 삭제 후 선택된 탭(서점/도서관)에 맞는 장소 재검색
       clearMapAndList();
       searchCategoryPlaces();
     }
@@ -329,20 +280,6 @@
       };
 
       placesService.keywordSearch(keyword, placesSearchCallback, searchOptions);
-    }
-
-    // 사용자 키워드 직접 검색
-    function searchCustomKeyword() {
-      const keywordInput = document.getElementById('keywordInput');
-      const keyword = keywordInput.value.trim();
-
-      if (!keyword) {
-        alert('검색어를 입력해 주세요.');
-        return;
-      }
-
-      clearMapAndList();
-      placesService.keywordSearch(keyword, placesSearchCallback);
     }
 
     // 카카오 장소 검색 콜백 함수
