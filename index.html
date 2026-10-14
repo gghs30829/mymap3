@@ -194,10 +194,10 @@
     let currentCenter = null; // 사용자 현재 위치 좌표
     let currentCategory = 'bookstore'; // 현재 선택된 카테고리 기본값 ('bookstore' 또는 'library')
 
-    // 마커 아이콘 이미지 URL 설정 (서점: 노란 별 / 도서관: 파란 별)
+    // 마커 아이콘 이미지 URL 설정 (서점: 노란 별 / 도서관: 파란색 마커)
     const markerImageUrls = {
       bookstore: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
-      library: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_blue.png' // 카카오맵 제공 파란색 별/포인트 아이콘
+      library: 'https://t1.daumcdn.net/mapjsapi/images/2x/marker_blue.png'
     };
 
     // 카카오 지도 SDK 로드 완료 후 실행
@@ -300,7 +300,7 @@
 
       const bounds = new kakao.maps.LatLngBounds();
 
-      // 카테고리별 마커 이미지 세팅 (서점: 노란 별, 도서관: 파란 별)
+      // 카테고리별 마커 이미지 세팅
       const imageUrl = markerImageUrls[currentCategory] || markerImageUrls.bookstore;
       const imageSize = new kakao.maps.Size(27, 36);
       const markerImage = new kakao.maps.MarkerImage(imageUrl, imageSize);
