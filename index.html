@@ -186,4 +186,58 @@
   </div>
 
   <script>
-    //
+    // 상태 및 지도 변수 선언
+    let map = null;
+    let placesService = null;
+    let markers = [];
+    let infoWindow = null;
+    let currentCenter = null; // 사용자 현재 위치 좌표
+    let currentCategory = 'bookstore'; // 현재 선택된 카테고리 기본값 ('bookstore' 또는 'library')
+
+    // 마커 아이콘 이미지 URL 설정 (서점: 노란 별 / 도서관: 파란색 마커)
+    const markerImageUrls = {
+      bookstore: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+      library: 'https://t1.daumcdn.net/mapjsapi/images/2x/marker_blue.png'
+    };
+
+    // 카카오 지도 SDK 로드 완료 후 실행
+    kakao.maps.load(function () {
+      initMap();
+    });
+
+    // 지도 초기화 함수
+    function initMap() {
+      const mapContainer = document.getElementById('map');
+      
+      // 기본 중심 좌표 (서울시청)
+      const defaultLat = 37.566826;
+      const defaultLng = 126.978656;
+      currentCenter = new kakao.maps.LatLng(defaultLat, defaultLng);
+
+      const mapOptions = {
+        center: currentCenter,
+        level: 5 // 지도 확대 레벨 5
+      };
+
+      map = new kakao.maps.Map(mapContainer, mapOptions);
+      placesService = new kakao.maps.services.Places();
+      infoWindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+
+      // 사용자 현재 위치 가져오기
+      getCurrentLocation();
+    }
+
+    // 현재 위치를 수신하고 초기 카테고리(서점) 검색 수행
+    function getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            const currentLat = position.coords.latitude;
+            const currentLng = position.coords.longitude;
+            currentCenter = new kakao.maps.LatLng(currentLat, currentLng);
+
+            // 지도 중심 이동
+            map.setCenter(currentCenter);
+
+            // 현재 카테고리 장소 자동 검색
+            searchCategoryPlaces();
